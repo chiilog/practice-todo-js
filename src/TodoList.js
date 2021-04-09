@@ -76,8 +76,6 @@ class TodoList {
 
 	/**
 	 * 完了ボタンの生成
-	 *
-	 * HACK: ボタンの生成と機能追加が1つのメソッドで行われてる
 	 */
 	setupCompleteButton() {
 		const button = document.createElement( 'button' );
@@ -88,8 +86,19 @@ class TodoList {
 			button.className = this.options.complete.classname;
 		}
 
-		button.addEventListener( 'click', () => {
-			const todoElement = button.closest( '.todo-block' );
+		this.registerCompleteButton( button );
+
+		return button;
+	}
+
+	/**
+	 * 完了ボタンの動作
+	 *
+	 * @param {Element} element
+	 */
+	registerCompleteButton( element ) {
+		element.addEventListener( 'click', () => {
+			const todoElement = element.closest( '.todo-block' );
 			const listItem = this.setupListItem();
 			document
 				.getElementById( INCOMPLETE_AREA_NAME )
@@ -103,14 +112,10 @@ class TodoList {
 				.getElementById( COMPLETE_AREA_NAME )
 				.appendChild( listItem );
 		} );
-
-		return button;
 	}
 
 	/**
 	 * 削除ボタンの生成
-	 *
-	 * HACK: ボタンの生成と機能追加が1つのメソッドで行われてる
 	 */
 	setupDeleteButton() {
 		const button = document.createElement( 'button' );
@@ -121,18 +126,25 @@ class TodoList {
 			button.className = this.options.del.classname;
 		}
 
-		button.addEventListener( 'click', () => {
-			const liElement = button.closest( '.list-item' );
-			document.getElementById( INCOMPLETE_AREA_NAME ).removeChild( liElement );
-		} );
+		this.registerDeleteButton( button );
 
 		return button;
 	}
 
 	/**
-	 * 戻すボタンの生成
+	 * 削除ボタンの動作
 	 *
-	 * HACK: ボタンの生成と機能追加が1つのメソッドで行われてる
+	 * @param {Element} element
+	 */
+	registerDeleteButton( element ) {
+		element.addEventListener( 'click', () => {
+			const liElement = element.closest( '.list-item' );
+			document.getElementById( INCOMPLETE_AREA_NAME ).removeChild( liElement );
+		} );
+	}
+
+	/**
+	 * 戻すボタンの生成
 	 */
 	setupRestoreButton() {
 		const button = document.createElement( 'button' );
@@ -143,8 +155,19 @@ class TodoList {
 			button.className = this.options.restore.classname;
 		}
 
-		button.addEventListener( 'click', () => {
-			const todoElement = button.closest( '.todo-block' );
+		this.registerRestoreButton( button );
+
+		return button;
+	}
+
+	/**
+	 * 戻すボタンの動作
+	 *
+	 * @param {Element} element
+	 */
+	registerRestoreButton( element ) {
+		element.addEventListener( 'click', () => {
+			const todoElement = element.closest( '.todo-block' );
 			const listItem = this.setupListItem();
 			document
 				.getElementById( COMPLETE_AREA_NAME )
@@ -158,8 +181,6 @@ class TodoList {
 				.getElementById( INCOMPLETE_AREA_NAME )
 				.appendChild( listItem );
 		} );
-
-		return button;
 	}
 
 	/**
