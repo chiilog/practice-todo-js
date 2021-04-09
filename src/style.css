@@ -1,0 +1,42 @@
+body {
+	color: #16160e;
+}
+
+.todo-block {
+	display: flex;
+	align-items: center;
+}
+
+.todo-block > * {
+	margin: 0 10px 0 0;
+}
+
+.list-item {
+	margin: 10px 0;
+}
+
+.input-area,
+.incomplete-area,
+.complete-area {
+	width: 400px;
+	padding: 8px;
+	margin-top: 8px;
+	border-radius: 8px;
+}
+
+.input-area {
+	background: #FAE6E6;
+}
+
+.incomplete-area {
+	background: #D5E9E4;
+}
+
+.complete-area {
+	background: #f4f4f4;
+}
+
+.title {
+	text-align: center;
+	font-weight: bold;
+}
