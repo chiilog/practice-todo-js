@@ -51,28 +51,103 @@ class TodoList {
 	 */
 	registerAddButton() {
 		document.getElementById( 'add-button' ).addEventListener( 'click', () => {
-			this.setupIncompleteItem();
+			this.initIncompleteItem();
 			this.clearText();
 		});
 	}
 
 	/**
-	 * 未完了リストの生成
+	 * 完了エリアへの描画かどうか
+	 *
+	 * @param {String} area
+	 * @return {boolean}
 	 */
-	setupIncompleteItem() {
+	isComplete( area ) {
+		return area === COMPLETE_AREA_NAME;
+	}
+
+	/**
+	 * ボタンの生成
+	 *
+	 * @param {String} area
+	 * @param {Element} target
+	 */
+	appendButtons( area, target ) {
+		if ( this.isComplete( area ) ) {
+			target.appendChild( this.setupRestoreButton() );
+		} else {
+			target.appendChild( this.setupCompleteButton() );
+			target.appendChild( this.setupDeleteButton() );
+		}
+	}
+
+	/**
+	 * 完了ボタン・削除ボタンの除去
+	 *
+	 * @param {String} area
+	 * @param {Element} target
+	 */
+	removeButtons( area, target ) {
+		if ( this.isComplete( area ) ) {
+			target.removeChild( target.querySelector( '.complete-button' ) );
+			target.removeChild( target.querySelector( '.delete-button' ) );
+		} else {
+			target.removeChild( target.querySelector( '.restore-button' ) );
+		}
+	}
+
+	/**
+	 * TODO追加時のリスト生成
+	 */
+	initIncompleteItem() {
 		const area = document.getElementById( INCOMPLETE_AREA_NAME );
 		const listItem = this.setupListItem();
 		const todoDiv = this.setupTodoDiv();
 		area.appendChild( listItem );
 		todoDiv.appendChild( this.setupText() );
-		todoDiv.appendChild( this.setupCompleteButton() );
-		todoDiv.appendChild( this.setupDeleteButton() );
+		this.appendButtons( INCOMPLETE_AREA_NAME, todoDiv );
 		listItem.appendChild( todoDiv );
 	}
 
 	/**
-	 * TODO: 完了リストの生成をひとつのメソッドにできないか検証
+	 * 未完了リストの生成
+	 *
+	 * @param {Element} target
 	 */
+	setupIncompleteItem( target ) {
+		const item = this.setupListItem();
+		document
+			.getElementById( COMPLETE_AREA_NAME )
+			.removeChild( target.parentNode );
+
+		this.removeButtons( INCOMPLETE_AREA_NAME, target );
+		this.appendButtons( INCOMPLETE_AREA_NAME, target );
+
+		item.appendChild( target );
+		document
+			.getElementById( INCOMPLETE_AREA_NAME )
+			.appendChild( item );
+	}
+
+	/**
+	 * 完了リストの生成
+	 *
+	 * @param {Element} element
+	 */
+	setupCompleteItem( element ) {
+		const block = element.closest( '.todo-block' );
+		const item = this.setupListItem();
+		document
+			.getElementById( INCOMPLETE_AREA_NAME )
+			.removeChild( block.parentNode );
+
+		this.removeButtons( COMPLETE_AREA_NAME, block );
+		this.appendButtons( COMPLETE_AREA_NAME, block );
+		item.appendChild( block );
+		document
+			.getElementById( COMPLETE_AREA_NAME )
+			.appendChild( item );
+	}
 
 	/**
 	 * 完了ボタンの生成
@@ -98,19 +173,7 @@ class TodoList {
 	 */
 	registerCompleteButton( element ) {
 		element.addEventListener( 'click', () => {
-			const todoElement = element.closest( '.todo-block' );
-			const listItem = this.setupListItem();
-			document
-				.getElementById( INCOMPLETE_AREA_NAME )
-				.removeChild( todoElement.parentNode );
-
-			todoElement.removeChild( todoElement.querySelector( '.complete-button' ) );
-			todoElement.removeChild( todoElement.querySelector( '.delete-button' ) );
-			todoElement.appendChild( this.setupRestoreButton() );
-			listItem.appendChild( todoElement );
-			document
-				.getElementById( COMPLETE_AREA_NAME )
-				.appendChild( listItem );
+			this.setupCompleteItem( element.closest( '.todo-block' ) );
 		} );
 	}
 
@@ -144,7 +207,9 @@ class TodoList {
 	}
 
 	/**
-	 * 戻すボタンの生成
+	 * 戻すボタンの作成
+	 *
+	 * @return {HTMLButtonElement}
 	 */
 	setupRestoreButton() {
 		const button = document.createElement( 'button' );
@@ -167,19 +232,8 @@ class TodoList {
 	 */
 	registerRestoreButton( element ) {
 		element.addEventListener( 'click', () => {
-			const todoElement = element.closest( '.todo-block' );
-			const listItem = this.setupListItem();
-			document
-				.getElementById( COMPLETE_AREA_NAME )
-				.removeChild( todoElement.parentNode );
-
-			todoElement.removeChild( todoElement.querySelector( '.restore-button' ) );
-			todoElement.appendChild( this.setupCompleteButton() );
-			todoElement.appendChild( this.setupDeleteButton() );
-			listItem.appendChild( todoElement );
-			document
-				.getElementById( INCOMPLETE_AREA_NAME )
-				.appendChild( listItem );
+			const target = element.closest( '.todo-block' );
+			this.setupIncompleteItem( target );
 		} );
 	}
 
